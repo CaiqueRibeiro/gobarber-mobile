@@ -12,12 +12,14 @@ const App = createStackNavigator();
 const AppRoutes: React.FC = () => (
   <App.Navigator
     screenOptions={{
+      headerShown: false,
       cardStyle: {backgroundColor: '#312e38'},
       headerTintColor: '#FFF',
       headerStyle: {
         backgroundColor: '#7159c1',
       },
-    }}>
+    }}
+  >
     <App.Screen name="Dashboard" component={Dashboard} />
     <App.Screen name="CreateAppointment" component={CreateAppointment} />
     <App.Screen name="AppointmentCreated" component={AppointmentCreated} />
