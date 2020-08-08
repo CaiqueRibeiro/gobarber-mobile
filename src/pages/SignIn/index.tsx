@@ -74,14 +74,12 @@ const SignIn: React.FC = () => {
         const errors = getValidationErrors(error);
 
         formRef.current?.setErrors(errors);
-
-        return;
       }
 
-      Alert.alert(
-        'Erro na autenticação',
-        'Ocorreu um erro com suas credenciais',
-      );
+      // Alert.alert(
+      //   'Erro na autenticação',
+      //   'Ocorreu um erro com suas credenciais',
+      // );
     }
   }, []);
 

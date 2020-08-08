@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Feather';
+import {FlatList} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 import {useAuth} from '../../hooks/auth';
@@ -74,7 +75,8 @@ const Dashboard: React.FC = () => {
         }
         renderItem={({item: provider}) => (
           <ProviderContainer
-            onPress={() => navigateToCreateAppointment(provider.id)}>
+            onPress={() => navigateToCreateAppointment(provider.id)}
+          >
             <ProviderAvatar
               source={{
                 uri:

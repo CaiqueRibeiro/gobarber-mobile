@@ -6,6 +6,7 @@ import React, {
   useContext,
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+import {Alert} from 'react-native';
 import api from '../services/api';
 
 interface User {

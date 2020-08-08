@@ -11,7 +11,7 @@ export const Container = styled.View`
 export const Header = styled.View`
   padding: 24px;
   background: #28262e;
-  padding-top: ${getStatusBarHeight() + 24}px
+  padding-top: ${getStatusBarHeight() + 24}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -45,7 +45,7 @@ export const ProvidersListTitle = styled.Text`
   font-size: 24px;
   margin-bottom: 24px;
   color: #f4ede8;
-  font-family: 'RobotoSlab-Medium
+  font-family: 'RobotoSlab-Medium';
 `;
 
 export const ProviderContainer = styled(RectButton)`
@@ -56,6 +56,7 @@ export const ProviderContainer = styled(RectButton)`
   flex-direction: row;
   align-items: center;
 `;
+
 export const ProviderAvatar = styled.Image`
   width: 72px;
   height: 72px;
