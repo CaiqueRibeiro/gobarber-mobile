@@ -1,8 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {Platform, Alert} from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
-import {HeaderBackButton} from '@react-navigation/stack';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+import {useAuth} from '../../hooks/auth';
+import api from '../../services/api';
+
 import {
   Container,
   Header,
@@ -14,9 +18,11 @@ import {
   ProviderContainer,
   ProviderAvatar,
   ProviderName,
+  Calendar,
+  Title,
+  OpenDatePickerButton,
+  OpenDatePickerButtonText,
 } from './styles';
-import {useAuth} from '../../hooks/auth';
-import api from '../../services/api';
 
 interface RouteParams {
   providerId: string;
@@ -28,12 +34,20 @@ export interface Provider {
   avatar_url: string;
 }
 
+interface AvailabilityItem {
+  hour: number;
+  available: boolean;
+}
+
 const CreateAppointment: React.FC = () => {
   const {user} = useAuth();
   const route = useRoute();
   const {goBack} = useNavigation();
   const routeParams = route.params as RouteParams;
 
+  const [availability, setAvailability] = useState<AvailabilityItem[]>([]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState(
     routeParams.providerId,
@@ -45,6 +59,20 @@ const CreateAppointment: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    api
+      .get(`providers/${selectedProvider}/day-availability`, {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+        },
+      })
+      .then((response) => {
+        setAvailability(response.data);
+      });
+  }, [selectedDate, selectedProvider]);
+
   const navigateBack = useCallback(() => {
     goBack();
   }, [goBack]);
@@ -52,6 +80,23 @@ const CreateAppointment: React.FC = () => {
   const handleSelectProvider = useCallback((providerId: string) => {
     setSelectedProvider(providerId);
   }, []);
+
+  const handleToggleDatePicker = useCallback(() => {
+    setShowDatePicker((state) => !state);
+  }, []);
+
+  const handleDateChanged = useCallback(
+    (event: any, date: Date | undefined) => {
+      if (Platform.OS === 'android') {
+        setShowDatePicker(false);
+      }
+
+      if (date) {
+        setSelectedDate(date);
+      }
+    },
+    [],
+  );
 
   return (
     <Container>
@@ -73,8 +118,15 @@ const CreateAppointment: React.FC = () => {
           renderItem={({item: provider}) => (
             <ProviderContainer
               onPress={() => handleSelectProvider(provider.id)}
-              selected={provider.id === selectedProvider}>
-              <ProviderAvatar source={{uri: provider.avatar_url}} />
+              selected={provider.id === selectedProvider}
+            >
+              <ProviderAvatar
+                source={{
+                  uri:
+                    provider.avatar_url ||
+                    'https://api.adorable.io/avatars/80/abott@adorable.png',
+                }}
+              />
               <ProviderName selected={provider.id === selectedProvider}>
                 {provider.name}
               </ProviderName>
@@ -82,6 +134,24 @@ const CreateAppointment: React.FC = () => {
           )}
         />
       </ProvidersListContainer>
+      <Calendar>
+        <Title>Escolha a data</Title>
+
+        <OpenDatePickerButton onPress={handleToggleDatePicker}>
+          <OpenDatePickerButtonText>
+            Selecionar outra data
+          </OpenDatePickerButtonText>
+        </OpenDatePickerButton>
+        {showDatePicker && (
+          <DateTimePicker
+            mode="date"
+            display="calendar"
+            textColor="#f4ede8"
+            value={selectedDate}
+            onChange={handleDateChanged}
+          />
+        )}
+      </Calendar>
     </Container>
   );
 };
